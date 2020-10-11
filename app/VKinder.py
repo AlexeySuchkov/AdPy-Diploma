@@ -1,4 +1,4 @@
-from app.functions import \
+from app.custom_functions import \
     User, get_photos, best_3_photo
 from app.db import \
     create_user_matches_table, create_photos_table, add_matches, add_photo, \
