@@ -33,6 +33,7 @@ def get_token():
 
 
 def make_request(method, new_params):
+    print('Делаем запрос')
     params = {
         'v': VK_VERSION
     }
@@ -45,6 +46,7 @@ def make_request(method, new_params):
 
 
 def get_user_info(user_id, token):
+    print('Получаем информацию о пользователе')
     result = make_request('users.get', {
         'user_ids': user_id,
         'access_token': token,
@@ -55,6 +57,7 @@ def get_user_info(user_id, token):
 
 
 def get_age(bdate):
+    print('Указываем возраст')
     birthday = datetime.datetime.strptime(bdate, '%d.%m.%Y')
     today = datetime.date.today()
     age = today.year - birthday.year
@@ -87,6 +90,7 @@ class User:
         self.user_sex = user_info['sex']
 
     def get_group_list(self):
+        print('Получаем список групп')
         result = make_request('groups.get', {
             'user_id': self.user_id,
             'access_token': self.token,
@@ -96,6 +100,7 @@ class User:
         return result['response']['items']
 
     def count_search_matches(self):
+        print('Подбираем варианты и получаем информацию')
         search_sex = '1'
         if self.user_sex == '1':
             search_sex = '2'
@@ -140,6 +145,7 @@ class User:
 
 
 def get_photos(token, owner_id):
+    print('Получаем фото')
     return make_request('photos.get', {
         'access_token': token,
         'owner_id': owner_id,
@@ -149,6 +155,7 @@ def get_photos(token, owner_id):
 
 
 def best_3_photo(photo_list):
+    print('Выбираем 3 лучших фото')
     tmp = {}
     for p in photo_list:
         tmp[p['likes']['count']] = p['sizes']

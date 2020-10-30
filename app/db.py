@@ -18,6 +18,7 @@ def execute_context(query, *args):
 
 
 def create_user_matches_table():
+    print('Создается таблица для совпадений в БД')
     query = sql.SQL('CREATE TABLE IF NOT EXISTS user_matches ('
                     'id SERIAL PRIMARY KEY NOT NULL,'
                     'user_vk_id INT NOT NULL,'
@@ -29,6 +30,7 @@ def create_user_matches_table():
 
 
 def create_photos_table():
+    print('Создается таблица фото в БД')
     query = sql.SQL('CREATE TABLE IF NOT EXISTS photos ('
                     'photo_id SERIAL PRIMARY KEY NOT NULL,'
                     'match_user_vk_id INT NOT NULL,'
@@ -38,6 +40,7 @@ def create_photos_table():
 
 
 def add_matches(user_vk_id, match_vk_id):
+    print('Добавляем подходящие варианты в БД')
     query = sql.SQL('INSERT INTO user_matches (user_vk_id, match_vk_id) '
                     'SELECT %s, %s '
                     'WHERE NOT EXISTS (SELECT * FROM user_matches '
@@ -46,6 +49,7 @@ def add_matches(user_vk_id, match_vk_id):
 
 
 def add_photo(match_user_id, photo_link):
+    print('Добавляем ссылки на фото подходящих пользователей')
     query = sql.SQL('INSERT INTO photos (match_user_vk_id, photo_url) '
                     'SELECT %s, %s'
                     'WHERE NOT EXISTS (SELECT * FROM photos '
@@ -55,6 +59,7 @@ def add_photo(match_user_id, photo_link):
 
 
 def get_match_user_id(match_user_vk_id):
+    print('Получаем ID подходящего пользователя')
     curs = conn.cursor()
     curs.execute('SELECT id FROM user_matches WHERE match_vk_id = (%s)',
                  (match_user_vk_id,))
@@ -64,6 +69,7 @@ def get_match_user_id(match_user_vk_id):
 
 
 def get_10_matches(user_vk_id):
+    print('Получаем 10 подходящих пользователей')
     curs = conn.cursor()
     curs.execute('SELECT match_vk_id FROM user_matches '
                  'WHERE user_vk_id = (%s) '
@@ -78,6 +84,7 @@ def get_10_matches(user_vk_id):
 
 
 def get_photos_by_id(id):
+    print('Получаем фото по ID пользователя')
     curs = conn.cursor()
     curs.execute('SELECT photo_url FROM photos WHERE match_user_vk_id = (%s)',
                  (id,))
@@ -90,12 +97,14 @@ def get_photos_by_id(id):
 
 
 def add_to_black_list(id):
+    print('Добавляем в черный список')
     query = sql.SQL('UPDATE user_matches SET black_list = true '
                     'WHERE match_vk_id = (%s)')
     execute_context(query, (id,))
 
 
 def get_users_id_list():
+    print('Получаем список ID пользователей')
     curs = conn.cursor()
     curs.execute('SELECT user_vk_id FROM user_matches')
     tmp = curs.fetchall()
@@ -107,6 +116,7 @@ def get_users_id_list():
 
 
 def write_to_json(user_id):
+    print('Записываем результаты в файл')
     first_10 = {}
     for u in get_10_matches(user_id):
         first_10[u] = get_photos_by_id(u)
